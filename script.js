@@ -43,7 +43,48 @@ keys.map((cKey) => {
 
 document.getElementById('keypad').addEventListener('click', (e) => {
   console.log(e.target.getAttributes);
+  const type = 'clear';
+  if (type === 'clear-all') {
+    document.getElementById('calc-output').innerHTML = '';
+  } else if (type === 'clear') {
+    document.getElementById('calc-output').innerHTML = document
+      .getElementById('calc-output')
+      .innerHTML.substring(
+        0,
+        document.getElementById('calc-output').innerHTML.length - 1
+      );
+  } else {
+    const valid = checkValidFormat(
+      type,
+      document.getElementById('calc-output').innerHTML
+    );
+    if (valid) {
+      calculate();
+    } else {
+      console.print('Invalid format');
+    }
+  }
 });
 function printKey(id, value) {
   console.log(id, value);
+}
+const val = ['1', '4', '(', '3', '+', '5', ')'];
+checkValidFormat(val);
+//check if valid format
+function checkValidFormat(type) {
+  const str = document.getElementById('calc-output').innerHTML;
+  //  console.log(str);
+  //120
+}
+
+// solve the expression ["1","4","(", "3", "+", "5",")"] 14*8 = 112
+function calculate(val) {
+  let result = 0;
+  let tempRes;
+  val.forEach((v) => {
+    switch (v) {
+      case ')':
+        return;
+    }
+  });
 }
