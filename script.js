@@ -10,7 +10,7 @@ const keys = [
   { id: 5, type: 'number', value: 7, desc: '7' },
   { id: 6, type: 'number', value: 8, desc: '8' },
   { id: 7, type: 'number', value: 9, desc: '9' },
-  { id: 8, type: 'operator', value: 'multiplication', desc: 'x' },
+  { id: 8, type: 'operator', value: 'multiplication', desc: 'X' },
 
   { id: 9, type: 'number', value: '4', desc: '4' },
   { id: 10, type: 'number', value: '5', desc: '5' },
@@ -42,7 +42,9 @@ keys.map((cKey) => {
 });
 
 document.getElementById('keypad').addEventListener('click', (e) => {
-  console.log(e.target.getAttributes);
+  console.log(e.target);
+  document.getElementById('calc-output').innerHTML =
+    document.getElementById('calc-output').innerHTML + e.target.innerHTML;
   const type = 'clear';
   if (type === 'clear-all') {
     document.getElementById('calc-output').innerHTML = '';
@@ -53,18 +55,50 @@ document.getElementById('keypad').addEventListener('click', (e) => {
         0,
         document.getElementById('calc-output').innerHTML.length - 1
       );
-  } else {
-    const valid = checkValidFormat(
-      type,
+  } else if (type === 'equals') {
+    const valid = checkExpressionBeforeResult(
       document.getElementById('calc-output').innerHTML
     );
     if (valid) {
-      calculate();
+      // calculate();
+      console.log('Valid expression');
     } else {
       console.print('Invalid format');
     }
+  } else {
+    const valid = checkValidFormat(type);
+    if (valid) {
+      document.getElementById('calc-output').innerHTML =
+        document.getElementById('calc-output').innerHTML + e.target.innerHTML;
+    }
   }
 });
+
+function checkExpressionBeforeResult(str) {
+  let OpenBracketCount = 0;
+  let CloseBracketCount = 0;
+  if (str.length === 0) {
+    return false;
+  }
+  if (
+    ['+', '-', '%', 'X'].includes(str[0]) ||
+    ['+', '-', '%', 'X'].includes(str[str.length - 1])
+  ) {
+    return false;
+  }
+  str.forEach((s) => {
+    if (s === '(') {
+      ++OpenBracketCount;
+    }
+    if (s === ')') {
+      ++CloseBracketCount;
+    }
+  });
+  if (OpenBracketCount !== CloseBracketCount) {
+    return false;
+  }
+  return true;
+}
 function printKey(id, value) {
   console.log(id, value);
 }
@@ -73,6 +107,16 @@ checkValidFormat(val);
 //check if valid format
 function checkValidFormat(type) {
   const str = document.getElementById('calc-output').innerHTML;
+  if (str.length === 0 && type === 'operator') {
+    return false;
+  }
+  if (
+    ['+', '-', '%', 'X'].includes(str[str.length - 1]) &&
+    type === 'operator'
+  ) {
+    return false;
+  }
+  return true;
   //  console.log(str);
   //120
 }
